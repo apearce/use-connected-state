@@ -1,0 +1,41 @@
+{
+  "name": "use-connected-state",
+  "version": "0.0.1",
+  "description": "Connect state across React components. No Context. No callbacks. No wrappers.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apearce/use-connected-state.git"
+  },
+  "keywords": [
+    "React",
+    "Hooks",
+    "State"
+  ],
+  "author": "Alan Pearce <alan.pearce@alttag.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/apearce/use-connected-state/issues"
+  },
+  "homepage": "https://github.com/apearce/use-connected-state#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
+    "@testing-library/react-hooks": "^3.4.2",
+    "babel-preset-minify": "^0.5.1",
+    "jest": "^26.6.3",
+    "react-test-renderer": "^17.0.1"
+  },
+  "peerDependencies": {
+    "react": "^16.9.0"
+  }
+}
