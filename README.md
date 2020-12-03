@@ -34,7 +34,7 @@ import useConnectedState from 'use-connected-state';
 function Clicks() {
     const [clicks] = useConnectedState({ key: 'clicks', state: 0 });
 
-    return <div>Total Clicks: {clicks}</div>
+    return (<div>Total Clicks: {clicks}</div>);
 }
 
 export default Clicks;
