@@ -26,17 +26,19 @@ function useConnectedState({
     const setByKey = useCallback((key, s) => {
         if (returns[scope].hasOwnProperty(key)) {
             const newState = (typeof s === 'function') ? s(returns[scope][key]) : s;
+            const setterState = (typeof newState === 'function') ? () => newState : newState;
 
             returns[scope][key] = newState;
-            setters[scope][key].forEach(setter => setter(newState));
+            setters[scope][key].forEach(setter => setter(setterState));
         }
     }, [scope]);
 
     const setSharedState = useCallback((s) => {
         const newState = (typeof s === 'function') ? s(returns[scope][key], returns[scope], setByKey) : s;
+        const setterState = (typeof newState === 'function') ? () => newState : newState;
 
         returns[scope][key] = newState;
-        setters[scope][key].forEach(setter => setter(newState));
+        setters[scope][key].forEach(setter => setter(setterState));
     }, [key, scope, setByKey]);
 
     useLayoutEffect(() => {
