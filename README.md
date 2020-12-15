@@ -81,6 +81,7 @@ If the Clicks component does not exist the `setByKey` call is ignored allowing t
 | `key` | `string` | `__defaultKey__` | (Optional) A `key` for the `state`. Any componets using `useConnectedState` with the same `key` and `scope` will be updated when `state` with that `key` is updated. |
 | `state` | any | `undefined` | (Optional) The default `state` for the given `key` and `scope`. The first component for the given `key` and `scope` will set the default `state` for all that follow. Subsequent components do not even need to pass this. As with `useState`, you can pass a function which returns the default state and it will only be executed on the first render. |
 | `scope` | `string` | `__defaultScope__` | (Optional) Provides `scope` for the `state`. Allows multiple components use the same `key` for `state` but not cause updates to each other. |
+| `passive` | `boolean` | `false` | (Optional) Allows you to passively get and set `state`. When `passive` is `true`, updates to that `state` will **not** trigger a re-render of the component. Also, when `true` the hook returns 2 functions: one to get the current value and one to set the value. |
 
 ## Getting All State
 The `getCurrentState(<scope>)` method that returns all `state` for the optionally specified `scope`. If `scope` is not specified it returns the `state` for the default `scope`.

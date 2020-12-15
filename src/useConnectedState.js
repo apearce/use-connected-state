@@ -1,5 +1,6 @@
 import {
     useCallback,
+    useEffect,
     useLayoutEffect,
     useState
 } from 'react';
@@ -10,10 +11,17 @@ const defaultScope = '__defaultScope__';
 
 function useConnectedState({
         key = '__defaultKey__',
+        passive = false,
         scope = defaultScope,
         state: defaultState
     } = {}) {
-    const [state, setState] = useState(defaultState);
+    let setterState = defaultState;
+
+    if (returns[scope] && returns[scope].hasOwnProperty(key) && !passive) {
+        setterState = returns[scope][key];
+    }
+
+    const [state, setState] = useState(setterState);
 
     if (!returns.hasOwnProperty(scope)) {
         returns[scope] = {};
@@ -23,22 +31,36 @@ function useConnectedState({
         returns[scope][key] = state;
     }
 
+    const getSharedState = useCallback(() => {
+        return returns[scope][key];
+    }, [key, scope]);
+
+    const passiveSetter = useCallback(() => {}, []);
+
     const setByKey = useCallback((key, s) => {
-        if (returns[scope].hasOwnProperty(key)) {
+        if (returns.hasOwnProperty(scope) && returns[scope].hasOwnProperty(key)) {
             const newState = (typeof s === 'function') ? s(returns[scope][key]) : s;
             const setterState = (typeof newState === 'function') ? () => newState : newState;
 
             returns[scope][key] = newState;
-            setters[scope][key].forEach(setter => setter(setterState));
+
+            if (setters.hasOwnProperty(scope) && setters[scope].hasOwnProperty(key)) {
+                setters[scope][key].forEach(setter => setter(setterState));
+            }
         }
     }, [scope]);
 
     const setSharedState = useCallback((s) => {
-        const newState = (typeof s === 'function') ? s(returns[scope][key], returns[scope], setByKey) : s;
-        const setterState = (typeof newState === 'function') ? () => newState : newState;
+        if (returns.hasOwnProperty(scope) && returns[scope].hasOwnProperty(key)) {
+            const newState = (typeof s === 'function') ? s(returns[scope][key], returns[scope], setByKey) : s;
+            const setterState = (typeof newState === 'function') ? () => newState : newState;
 
-        returns[scope][key] = newState;
-        setters[scope][key].forEach(setter => setter(setterState));
+            returns[scope][key] = newState;
+
+            if (setters.hasOwnProperty(scope) && setters[scope].hasOwnProperty(key)) {
+               setters[scope][key].forEach(setter => setter(setterState)); 
+            }
+        }
     }, [key, scope, setByKey]);
 
     useLayoutEffect(() => {
@@ -50,10 +72,24 @@ function useConnectedState({
             setters[scope][key] = [];
         }
 
-        setters[scope][key].push(setState);
-        
+        setters[scope][key].push(!passive ? setState : passiveSetter); 
+    }, [key, passive, scope]);
+
+    useLayoutEffect(() => {
+        if (!returns.hasOwnProperty(scope)) {
+            returns[scope] = {};
+        }
+    
+        if (!returns[scope].hasOwnProperty(key)) {
+            returns[scope][key] = state;
+        }
+    }, [key, scope, state]);
+
+    useEffect(() => {        
         return () => {
-            setters[scope][key] = setters[scope][key].filter(setter => setter !== setState);
+            const compareFunc = !passive ? setState : passiveSetter;
+
+            setters[scope][key] = setters[scope][key].filter(setter => setter !== compareFunc);
 
             if (setters[scope][key].length === 0) {
                 delete returns[scope][key];
@@ -65,9 +101,9 @@ function useConnectedState({
                 delete setters[scope];
             }
         };
-    }, [key, scope]);
+    }, [key, passive, scope]);
 
-    return [returns[scope][key], setSharedState];
+    return [passive ? getSharedState : returns[scope][key], setSharedState];
 }
 
 export function getCurrentState(scope = defaultScope) {

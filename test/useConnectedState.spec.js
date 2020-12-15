@@ -174,3 +174,29 @@ describe('getCurrentState', () => {
     expect(JSON.stringify(getCurrentState('bar'))).toBe('{"test2":"Some state too"}');
   });
 });
+
+describe('useConnectedState Hook passive', () => {
+  test('Test passive connection', () => {
+    const { result: result1 } = renderHook(() => useConnectedState({ key: 'foo', state: 'FOO' }));
+    const { result: result2 } = renderHook(() => useConnectedState({ key: 'foo', passive: true, state: 'FOO' }));
+
+    act(() => {
+      result2.current[1]('bar');
+    });
+
+    expect(result1.current[0]).toBe('bar');
+    expect(result2.current[0]()).toBe('bar');
+  });
+
+  test('Test only passive connections', () => {
+    const { result: result1 } = renderHook(() => useConnectedState({ key: 'foo', passive: true, state: 'FOO' }));
+    const { result: result2 } = renderHook(() => useConnectedState({ key: 'foo', passive: true, state: 'FOO' }));
+
+    act(() => {
+      result1.current[1]('BAR');
+    });
+
+    expect(result1.current[0]()).toBe('BAR');
+    expect(result2.current[0]()).toBe('BAR');
+  });
+});
