@@ -12,7 +12,7 @@ import React form 'react';
 import useConnectedState from 'use-connected-state';
 
 function Counter() {
-    const [count, setCount] = useConnectedState({ key: 'count', state: 0 });
+    const [count, setCount] = useConnectedState({ key: 'count', default: 0 });
 
     return (<div>
         <div>Count: {count}</div>
@@ -32,7 +32,7 @@ Let's say we have a component that shows how many times our counter has been cli
 import useConnectedState from 'use-connected-state';
 
 function Clicks() {
-    const [clicks] = useConnectedState({ key: 'clicks', state: 0 });
+    const [clicks] = useConnectedState({ key: 'clicks', default: 0 });
 
     return (<div>Total Clicks: {clicks}</div>);
 }
@@ -44,7 +44,7 @@ We can change our counter to update the clicks of the Clicks component.
 
 ```jsx
 function Counter() {
-    const [count, setCount] = useConnectedState({ key: 'count', state: 0 });
+    const [count, setCount] = useConnectedState({ key: 'count', default: 0 });
 
     const increment = () => {
         setCount((val, results, setByKey) => {
@@ -79,7 +79,8 @@ If the Clicks component does not exist the `setByKey` call is ignored allowing t
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `key` | `string` | `__defaultKey__` | (Optional) A `key` for the `state`. Any componets using `useConnectedState` with the same `key` and `scope` will be updated when `state` with that `key` is updated. |
-| `state` | any | `undefined` | (Optional) The default `state` for the given `key` and `scope`. The first component for the given `key` and `scope` will set the default `state` for all that follow. Subsequent components do not even need to pass this. As with `useState`, you can pass a function which returns the default state and it will only be executed on the first render. |
+| `default` | any | `undefined` | (Optional) The default `state` for the given `key` and `scope`. The first component for the given `key` and `scope` will set the default `state` for all that follow. Subsequent components do not even need to pass this. As with `useState`, you can pass a function which returns the default `state` and it will only be executed on the first render. |
+| `state` | any | `undefined` | (Optional) **Deprecated** - replaced by `default` which makes more sense. |
 | `scope` | `string` | `__defaultScope__` | (Optional) Provides `scope` for the `state`. Allows multiple components use the same `key` for `state` but not cause updates to each other. |
 | `passive` | `boolean` | `false` | (Optional) Allows you to passively get and set `state`. When `passive` is `true`, updates to that `state` will **not** trigger a re-render of the component. Also, when `true` the hook returns 2 functions: one to get the current value and one to set the value. |
 

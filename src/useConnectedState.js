@@ -10,12 +10,13 @@ const returns = {};
 const defaultScope = '__defaultScope__';
 
 function useConnectedState({
+        default: defaultState,
         key = '__defaultKey__',
         passive = false,
         scope = defaultScope,
-        state: defaultState
+        state: deprecated_defaultState
     } = {}) {
-    let setterState = defaultState;
+    let setterState = defaultState !== undefined ? defaultState : deprecated_defaultState;
 
     if (returns[scope] && returns[scope].hasOwnProperty(key) && !passive) {
         setterState = returns[scope][key];
