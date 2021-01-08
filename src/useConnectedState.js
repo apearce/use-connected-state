@@ -111,4 +111,12 @@ export function getCurrentState(scope = defaultScope) {
     return returns[scope];
 }
 
+export function useConnectedSetter(config) {
+    return useConnectedState(config)[1];
+}
+
+export function useConnectedValue(config) {
+    return useConnectedState(config)[0];
+}
+
 export default useConnectedState;

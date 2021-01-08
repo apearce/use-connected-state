@@ -1,5 +1,9 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import useConnectedState, { getCurrentState } from '../src/useConnectedState';
+import useConnectedState, { 
+  getCurrentState,
+  useConnectedSetter,
+  useConnectedValue
+} from '../src/useConnectedState';
 
 const testFunctionState = () => 'testFunctionState';
 
@@ -198,6 +202,42 @@ describe('useConnectedState Hook passive', () => {
 
     expect(result1.current[0]()).toBe('BAR');
     expect(result2.current[0]()).toBe('BAR');
+  });
+});
+
+describe('useConnectedSetter and useConnectedValue Hooks', () => {
+  test('Test normal and value connection', () => {
+    const { result: result1 } = renderHook(() => useConnectedState({ key: 'foo', default: 'FOO' }));
+    const { result: result2 } = renderHook(() => useConnectedValue({ key: 'foo', default: 'FOO' }));
+
+    act(() => {
+      result1.current[1]('bar');
+    });
+
+    expect(result1.current[0]).toBe('bar');
+    expect(result2.current).toBe('bar');
+  });
+
+  test('Test connection', () => {
+    const { result: result1 } = renderHook(() => useConnectedSetter({ key: 'foo', default: 'FOO' }));
+    const { result: result2 } = renderHook(() => useConnectedValue({ key: 'foo', default: 'FOO' }));
+
+    act(() => {
+      result1.current('bar');
+    });
+
+    expect(result2.current).toBe('bar');
+  });
+
+  test('Test only passive connections', () => {
+    const { result: result1 } = renderHook(() => useConnectedSetter({ key: 'foo', passive: true, default: 'FOO' }));
+    const { result: result2 } = renderHook(() => useConnectedValue({ key: 'foo', passive: true, default: 'FOO' }));
+
+    act(() => {
+      result1.current('BAR');
+    });
+
+    expect(result2.current()).toBe('BAR');
   });
 });
 

@@ -84,5 +84,38 @@ If the Clicks component does not exist the `setByKey` call is ignored allowing t
 | `scope` | `string` | `__defaultScope__` | (Optional) Provides `scope` for the `state`. Allows multiple components use the same `key` for `state` but not cause updates to each other. |
 | `passive` | `boolean` | `false` | (Optional) Allows you to passively get and set `state`. When `passive` is `true`, updates to that `state` will **not** trigger a re-render of the component. Also, when `true` the hook returns 2 functions: one to get the current value and one to set the value. |
 
+## Other Hooks
+If you just want set or get the value of state you can use `useConnectedSetter` or `useConnectedValue` respectively. These are named exports so you would import them like
+```jsx
+import { useConnectedSetter } from 'use-connected-state';
+```
+They take the same state config object as `useConnectedState`. When using `useConnectedSetter` you probably don't want that component to update when that `state` changes since you're not using the `value`, so you may want to add `passive: true` to the config.
+
+```jsx
+import { useConnectedValue } from 'use-connected-state';
+
+function ClickCount() {
+    const clicks = useConnectedValue({ key: 'clicks', default: 0 });
+
+    return (<div>Total Clicks: {clicks}</div>);
+}
+
+export default ClickCount;
+```
+```jsx
+import { useConnectedSetter } from 'use-connected-state';
+
+function Clicker() {
+    const setClicks = useConnectedSetter({ key: 'clicks', default: 0, passive: true });
+
+    const onClick = () => {
+        setClicks(clicks => clicks + 1);
+    };
+
+    return (<button onClick={onClick}>Click Me</button>);
+}
+
+export default Clicker;
+```
 ## Getting All State
 The `getCurrentState(<scope>)` method that returns all `state` for the optionally specified `scope`. If `scope` is not specified it returns the `state` for the default `scope`.
