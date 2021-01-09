@@ -1,4 +1,4 @@
-import useConnectedState, { getCurrentState } from './useConnectedState';
+import useConnectedState, { getCurrentState, useConnectedSetter, useConnectedValue } from './useConnectedState';
 
-export { getCurrentState };
+export { getCurrentState, useConnectedSetter, useConnectedValue };
 export default useConnectedState;
