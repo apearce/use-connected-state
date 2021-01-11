@@ -1,38 +1,52 @@
 # use-connected-state
-A hook to connect state across React components. No callbacks. No context. No wrappers.
+Hook to connect state chages across React components. No callbacks. No context. No wrappers.
 
 ## Installation
 `npm install use-connected-state`
 
 ## useConnectedState
 ### Usage
+`useConnectedState`, along with `useConnectedValue` and `useConnectedSetter`, let you connect `state` changes across components anywhere in the tree. When `state` changes in one component, it will be updated in other components connected to the same `state`, triggering a re-render.
 
+Let's say you have a `Input` component and another component that shows the number of characters the user entered. You could wrap these in a single component but they may not live by each other in the layout.
 ```jsx
-import React form 'react';
+// input.jsx
 import useConnectedState from 'use-connected-state';
 
-function Counter() {
-    const [count, setCount] = useConnectedState({ key: 'count', default: 0 });
+function Input() {
+    const [chars, setChars] = useConnectedState({ key: 'chars', default: '' });
+    const onChange = (e) => {
+        setChars(e.target.value);
+    };
 
-    return (<div>
-        <div>Count: {count}</div>
-        <button onClick={() => setCount(count + 1)}>Increment</button>
-        <button onClick={() => setCount(count - 1)}>Decrement</button>
-    </div>);
+    return (<input type="text" onChange={onChange} value={chars} />);
 }
 
-export default Counter;
+export default Input;
 ```
-This component when used by itself will work like any normal functional component that uses `useState`. If you add more than one anywhere in your tree, incrementing or decrementing any one of them will update the `count` of all of them. The components do not have to be of the same type, just have the same `key` and optionally `scope` in the state config.
+```jsx
+// character-count.jsx
+import { useConnectedValue } from 'use-connected-state';
+
+function CharacterCount() {
+    const chars = useConnectedValue({ key: 'chars', default: '' });
+
+    return (<p>Character Count: {chars.length}</p>);
+}
+
+export default CharacterCount;
+```
+The `Input` component when used by itself will work like any normal functional component that uses `useState`. You can add the `CharacterCount` component anywhere in the tree it will automatically show the count of characters from the `Input` component.
 
 Just like `useState`, `useConnectedState` returns the value and a setter function. Also just like `useState`, you can pass the setter function a function which will receive the previous (current really) value as the first argument, but it also gets 2 more arguments: an object containing all of the `state` in the current `scope` and a setter function that allows you to update any piece of `state` by its `key`.
 
-Let's say we have a component that shows how many times our counter has been clicked.
+Let's say we have a component that shows how many times a counter has been clicked.
 ```jsx
-import useConnectedState from 'use-connected-state';
+// clicks.jsx
+import { useConnectedValue } from 'use-connected-state';
 
 function Clicks() {
-    const [clicks] = useConnectedState({ key: 'clicks', default: 0 });
+    const clicks = useConnectedValue({ key: 'clicks', default: 0 });
 
     return (<div>Total Clicks: {clicks}</div>);
 }
@@ -40,9 +54,10 @@ function Clicks() {
 export default Clicks;
 ```
 
-We can change our counter to update the clicks of the Clicks component.
+Our `Counter` component can update the `clicks` of the `Clicks` component.
 
 ```jsx
+// counter.jsx
 function Counter() {
     const [count, setCount] = useConnectedState({ key: 'count', default: 0 });
 
@@ -71,10 +86,10 @@ function Counter() {
     </div>);
 }
 ```
-If the Clicks component does not exist the `setByKey` call is ignored allowing the Counter to still work.
+If the `Clicks` component does not exist the `setByKey` call is ignored allowing the `Counter` to still work.
 
 ### State Config
-`useConnectedState` takes an optional state config object.
+`useConnectedState` hooks take an optional state config object.
 #### Properties
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
@@ -92,6 +107,7 @@ import { useConnectedSetter } from 'use-connected-state';
 They take the same state config object as `useConnectedState`. When using `useConnectedSetter` you probably don't want that component to update when that `state` changes since you're not using the `value`, so you may want to add `passive: true` to the config.
 
 ```jsx
+// click-count.jsx
 import { useConnectedValue } from 'use-connected-state';
 
 function ClickCount() {
@@ -103,6 +119,7 @@ function ClickCount() {
 export default ClickCount;
 ```
 ```jsx
+// clicker.jsx
 import { useConnectedSetter } from 'use-connected-state';
 
 function Clicker() {
