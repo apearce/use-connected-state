@@ -19,7 +19,9 @@ function useConnectedState({
     let setterState = defaultState !== undefined ? defaultState : deprecated_defaultState;
 
     if (returns[scope] && returns[scope].hasOwnProperty(key) && !passive) {
-        setterState = returns[scope][key];
+        const currentState = returns[scope][key];
+
+        setterState = (typeof currentState === 'function') ? () => currentState : currentState;
     }
 
     const [state, setState] = useState(setterState);

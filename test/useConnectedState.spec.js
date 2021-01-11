@@ -66,6 +66,17 @@ describe('useConnectedState Hook', () => {
     expect(result4.current[0]).toBe('New State');
   });
 
+  test('Test setting a function as default state', () => {
+    const { result: result1 } = renderHook(() => useConnectedState({ key: 'tfs', default: () => testFunctionState }));
+    const { result: result2 } = renderHook(() => useConnectedState({ key: 'tfs' }));
+
+    expect(result1.current[0]).toBe(testFunctionState);
+    expect(result2.current[0]).toBe(testFunctionState);
+  
+    expect(result1.current[0]()).toBe('testFunctionState');
+    expect(result2.current[0]()).toBe('testFunctionState');
+  });
+
   test('Test setting a function as state', () => {
     const { result: result1 } = renderHook(() => useConnectedState({ }));
     const { result: result2 } = renderHook(() => useConnectedState({ }));
