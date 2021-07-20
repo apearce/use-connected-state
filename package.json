@@ -1,6 +1,6 @@
 {
   "name": "use-connected-state",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Connect state across React components. No Context. No callbacks. No wrappers.",
   "main": "./dist/index.js",
   "scripts": {
