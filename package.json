@@ -39,7 +39,6 @@
     "react": "^16.9.0"
   },
   "dependencies": {
-    "react": "^17.0.2",
     "use-immediate-effect": "^1.1.0"
   }
 }
