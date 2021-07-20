@@ -1,9 +1,9 @@
 import {
     useCallback,
     useEffect,
-    useLayoutEffect,
     useState
 } from 'react';
+import useImmediateEffect from 'use-immediate-effect';
 
 const setters = {};
 const returns = {};
@@ -66,7 +66,7 @@ function useConnectedState({
         }
     }, [key, scope, setByKey]);
 
-    useLayoutEffect(() => {
+    useImmediateEffect(() => {
         if (!setters.hasOwnProperty(scope)) {
             setters[scope] = {};
         }
@@ -78,7 +78,7 @@ function useConnectedState({
         setters[scope][key].push(!passive ? setState : passiveSetter); 
     }, [key, passive, scope]);
 
-    useLayoutEffect(() => {
+    useImmediateEffect(() => {
         if (!returns.hasOwnProperty(scope)) {
             returns[scope] = {};
         }
